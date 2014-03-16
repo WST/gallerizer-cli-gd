@@ -5,8 +5,8 @@
 class Image
 {
 	public:
-		Image::Image();
-		Image::~Image();
+		Image();
+		~Image();
 };
 
 #endif
