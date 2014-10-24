@@ -4,6 +4,7 @@
 
 #include <gd.h>
 #include <string>
+#include <stdint.h>
 
 class Image
 {
@@ -11,6 +12,8 @@ class Image
 		Image(std::string filename);
 		Image(const Image &image);
 		~Image();
+
+		void resize(uint32_t width, uint32_t height);
 
 	private:
 		gdImagePtr image;
