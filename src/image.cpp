@@ -15,9 +15,17 @@ Image::~Image() {
 	gdImageDestroy(image);
 }
 
-void Image::resize(uint32_t width, uint32_t height) {
+void Image::resize(int width, int height) {
 	gdImagePtr old = image;
 	image = gdImageCreateTrueColor(width, height);
 	gdImageCopyResampled(image, old, 0, 0, 0, 0, width, height, gdImageSX(old), gdImageSY(old));
 	gdImageDestroy(old);
+}
+
+int Image::width() {
+	return gdImageSX(image);
+}
+
+int Image::height() {
+	return gdImageSY(image);
 }

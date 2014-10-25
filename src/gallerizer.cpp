@@ -9,11 +9,40 @@
 #include <string.h>
 #include <pcre.h>
 #include <list>
+#include <libconfig.h++>
 
 typedef std::list<std::string> filelist;
 
 
 int main(int argc, char *argv[]) {
+	// Для сообщений в консоль
+	char buf[100];
+
+	information(" Gallerizer — утилита для создания галерей\n Консольная версия\n (c) 2014 Илья Аверков <ilya@averkov.net>", false, true);
+
+	// Конфигурационный файл
+	libconfig::Config cfg;
+	try {
+		cfg.readFile("/etc/gallerizer.cfg");
+	}
+	catch(const libconfig::FileIOException &fioex) {
+		return fatal(" Ошибка чтения /etc/gallerizer.cfg", -1);
+	}
+	catch(const libconfig::ParseException &pex)
+	{
+		sprintf(buf, " Ошибка чтения %s: строка %d — %s", pex.getFile(), pex.getLine(), pex.getError());
+		return fatal(buf, -1);
+	}
+
+	// Запросим переменные из конфигурационного файла
+	int width, height;
+  	try {
+		width = cfg.lookup("gallerizer.width");
+		height = cfg.lookup("gallerizer.height");
+	} catch(const libconfig::SettingNotFoundException &nfex) {
+		return fatal(" Необходимые параметры width и height в конфигурационном файле неверны", -1);
+	}
+
 	// Сначала скомпилируем регулярное выражение для проверки имён файлов
 	int options = 0;
 	const char *error;
@@ -38,25 +67,26 @@ int main(int argc, char *argv[]) {
 	}
 	closedir(directory);
 
-	// Для сообщений в консоль
-	char buf[100];
-
 	int count = files.size();
 	if(count == 0) {
 		return fatal(" Изображения не найдены, обрабатывать нечего", -1);
 	}
 
-	sprintf(buf, " Найдено %ld изображений", files.size());
-	information(buf);
+	sprintf(buf, " Найдено %ld изображений\n Целевой размер слайдов: %d×%d", files.size(), width, height);
+	information(buf, false, true);
 
+	int current = 0;
 	for(filelist::iterator item = files.begin(); item != files.end(); ++ item) {
-		sprintf(buf, " Обрабатывается изображение: %s", item->c_str());
+		Image *image = new Image(*item);
+
+		sprintf(buf, "[%d/%ld] Сжимаем: %s <%d×%d>", ++ current, files.size(), item->c_str(), image->width(), image->height());
 		information(buf);
 
-		Image *image = new Image(*item);
-		image->resize(640, 480);
+		image->resize(width, height);
 		delete image;
 	}
+
+	information(" Задание успешно выполнено", false, true);
 
 	return 0;
 }

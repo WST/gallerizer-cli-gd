@@ -7,7 +7,7 @@ SET(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall")
 set(GALLERIZER_SOURCE src/image.cpp src/gallerizer.cpp src/console.cpp)
 include_directories(src/include)
 add_executable(gallerizer ${GALLERIZER_SOURCE})
-target_link_libraries(gallerizer gd pcre)
+target_link_libraries(gallerizer gd pcre config++)
 
 set(BATCH_RESIZE_SOURCE src/image.cpp src/batch-resize.cpp)
 include_directories(src/include)

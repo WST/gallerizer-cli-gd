@@ -13,7 +13,9 @@ class Image
 		Image(const Image &image);
 		~Image();
 
-		void resize(uint32_t width, uint32_t height);
+		void resize(int width, int height);
+		int width();
+		int height();
 
 	private:
 		gdImagePtr image;
