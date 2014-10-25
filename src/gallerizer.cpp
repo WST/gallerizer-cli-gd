@@ -35,12 +35,20 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Запросим переменные из конфигурационного файла
-	int width, height;
+	int slide_width, slide_height, thumbnail_width, thumbnail_height, slide_quality, preview_quality;
   	try {
-		width = cfg.lookup("gallerizer.width");
-		height = cfg.lookup("gallerizer.height");
-	} catch(const libconfig::SettingNotFoundException &nfex) {
-		return fatal(" Необходимые параметры width и height в конфигурационном файле неверны", -1);
+		slide_width = cfg.lookup("gallerizer.slides.width");
+		slide_height = cfg.lookup("gallerizer.slides.height");
+		thumbnail_width = cfg.lookup("gallerizer.thumbnails.width");
+		thumbnail_height = cfg.lookup("gallerizer.thumbnails.height");
+		slide_quality = cfg.lookup("gallerizer.slides.quality");
+		preview_quality = cfg.lookup("gallerizer.thumbnails.quality");
+	}
+	catch(const libconfig::SettingNotFoundException &nfex) {
+		return fatal(" Необходимые параметры в конфигурационном файле неверны или отсутствуют", -1);
+	}
+	catch(const libconfig::SettingTypeException &stex) {
+		return fatal(" Необходимые параметры в конфигурационном файле неверны или отсутствуют", -1);
 	}
 
 	// Сначала скомпилируем регулярное выражение для проверки имён файлов
@@ -72,17 +80,16 @@ int main(int argc, char *argv[]) {
 		return fatal(" Изображения не найдены, обрабатывать нечего", -1);
 	}
 
-	sprintf(buf, " Найдено %ld изображений\n Целевой размер слайдов: %d×%d", files.size(), width, height);
+	sprintf(buf, " Найдено %ld изображений\n Целевой размер слайдов: %d×%d, эскизов: %d×%d", files.size(), slide_width, slide_height, thumbnail_width, thumbnail_height);
 	information(buf, false, true);
 
 	int current = 0;
 	for(filelist::iterator item = files.begin(); item != files.end(); ++ item) {
 		Image *image = new Image(*item);
 
-		sprintf(buf, "[%d/%ld] Сжимаем: %s <%d×%d>", ++ current, files.size(), item->c_str(), image->width(), image->height());
-		information(buf);
+		processed(++ current, files.size(), *item, image->width(), image->height());
 
-		image->resize(width, height);
+		image->resize(slide_width, slide_height);
 		delete image;
 	}
 

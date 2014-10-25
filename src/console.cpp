@@ -28,3 +28,21 @@ int fatal(std::string text, int exitcode) {
 	return exitcode;
 #endif
 }
+
+void processed(int current, long total, std::string filename, int width, int height) {
+
+	std::cout << "\033[01;35m" << " [" << current << "/" << total << "] " << "\033[0m";
+
+	std::cout << "Сжимаем: ";
+
+	std::cout << "\033[01;33m" << filename << "\033[0m";
+
+
+	std::cout << " <";
+		std::cout << width;
+		std::cout << "×";
+		std::cout << height;
+	std::cout << ">";
+
+	std::cout << std::endl;
+}
