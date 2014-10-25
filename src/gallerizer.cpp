@@ -10,6 +10,8 @@
 #include <pcre.h>
 #include <list>
 
+typedef std::list<std::string> filelist;
+
 
 int main(int argc, char *argv[]) {
 	// Сначала скомпилируем регулярное выражение для проверки имён файлов
@@ -25,7 +27,7 @@ int main(int argc, char *argv[]) {
 	char cwd[1024];
 	getcwd(cwd, sizeof(cwd));
 
-	std::list<std::string> files;
+	filelist files;
 
 	// Откроем каталог и обойдём его в цикле
 	DIR *directory = opendir(cwd);
@@ -36,15 +38,25 @@ int main(int argc, char *argv[]) {
 	}
 	closedir(directory);
 
+	// Для сообщений в консоль
+	char buf[100];
+
 	int count = files.size();
 	if(count == 0) {
 		return fatal(" Изображения не найдены, обрабатывать нечего", -1);
 	}
 
-	char buf[100];
 	sprintf(buf, " Найдено %ld изображений", files.size());
 	information(buf);
 
+	for(filelist::iterator item = files.begin(); item != files.end(); ++ item) {
+		sprintf(buf, " Обрабатывается изображение: %s", item->c_str());
+		information(buf);
+
+		Image *image = new Image(*item);
+		image->resize(640, 480);
+		delete image;
+	}
 
 	return 0;
 }
