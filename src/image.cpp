@@ -5,6 +5,7 @@ Image::Image(std::string filename) {
 	FILE *file = fopen(filename.c_str(), "r");
 	image = gdImageCreateFromJpeg(file);
 	fclose(file);
+	gdImageInterlace(image, 1);
 }
 
 Image::Image(const Image &image) {
@@ -28,4 +29,10 @@ int Image::width() {
 
 int Image::height() {
 	return gdImageSY(image);
+}
+
+void Image::saveAs(std::string filename, int quality) {
+	FILE *file = fopen(filename.c_str(), "w");
+	gdImageJpeg(image, file, quality);
+	fclose(file);
 }

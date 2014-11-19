@@ -5,6 +5,7 @@
 #include <gd.h>
 #include <string>
 #include <stdint.h>
+#include <stdio.h>
 
 class Image
 {
@@ -16,6 +17,7 @@ class Image
 		void resize(int width, int height);
 		int width();
 		int height();
+		void saveAs(std::string filename, int quality = 90);
 
 	private:
 		gdImagePtr image;

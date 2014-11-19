@@ -46,3 +46,10 @@ void processed(int current, long total, std::string filename, int width, int hei
 
 	std::cout << std::endl;
 }
+
+void alreadyExists(int current, long total, std::string filename) {
+	std::cout << "\033[01;35m" << " [" << current << "/" << total << "] " << "\033[0m";
+	std::cout << "Изображение уже обработано ранее: ";
+	std::cout << "\033[01;33m" << filename << "\033[0m";
+	std::cout << std::endl;
+}
